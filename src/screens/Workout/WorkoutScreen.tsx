@@ -77,14 +77,22 @@ export default function WorkoutScreen({ route, navigation }: Props) {
                 // Calcular duracion en minutos
                 const start = new Date(activeWorkout.startTime).getTime();
                 const end = new Date().getTime();
-                const durationMinutes = Math.round((end - start) / 60000) || 1; // min 1 minuto
+                const durationMinutes = Math.max(Math.round((end - start) / 60000), 1); // min 1 minuto
 
-                const exerciseNames = activeWorkout.exercises.map(e => e.name);
+                // Calcular volumen total
+                let totalKg = 0;
+                activeWorkout.exercises.forEach(ex => {
+                  ex.sets.forEach(set => {
+                    totalKg += (set.reps * set.weight);
+                  });
+                });
 
                 const workoutHistoryItem = {
+                  id: Date.now().toString(),
                   date: new Date().toLocaleDateString(),
                   duration: durationMinutes,
-                  exercises: exerciseNames,
+                  totalKg,
+                  exercises: activeWorkout.exercises,
                 };
 
                 const storedHistory = await AsyncStorage.getItem('workoutHistory');

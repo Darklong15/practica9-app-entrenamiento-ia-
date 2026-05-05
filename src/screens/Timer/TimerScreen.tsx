@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, Animated, Pressable } from 'react-native';
 import { ScreenContainer, Text, Button, Input } from '../../components/ui';
 import { useTheme } from '../../theme';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -64,6 +64,22 @@ export default function TimerScreen({ route }: Props) {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
     <ScreenContainer scrollable>
       <View style={styles.container}>
@@ -71,7 +87,7 @@ export default function TimerScreen({ route }: Props) {
         
         <Text 
           variant="stat" 
-          style={styles.timeDisplay} 
+          style={[styles.timeDisplay, { fontSize: 100, lineHeight: 110 }]} 
           color={timeLeft > 0 ? theme.colors.primary : theme.colors.textPrimary}
         >
           {formatTime(timeLeft)}
@@ -97,14 +113,25 @@ export default function TimerScreen({ route }: Props) {
         </View>
 
         <View style={styles.controlsRow}>
-          <Button 
-            variant="primary" 
-            onPress={toggleTimer} 
+          <Pressable 
+            onPressIn={handlePressIn} 
+            onPressOut={handlePressOut} 
+            onPress={toggleTimer}
             disabled={timeLeft === 0}
             style={styles.controlBtn}
           >
-            {isActive ? 'Pausar' : 'Iniciar'}
-          </Button>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+              <Button 
+                variant="primary" 
+                onPress={toggleTimer} 
+                disabled={timeLeft === 0}
+                style={{ width: '100%' }}
+              >
+                {isActive ? 'Pausar' : 'Iniciar'}
+              </Button>
+            </Animated.View>
+          </Pressable>
+
           <Button 
             variant="ghost" 
             onPress={resetTimer}

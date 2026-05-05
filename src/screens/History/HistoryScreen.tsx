@@ -1,88 +1,136 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet, RefreshControl, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ScreenContainer, Text, Card, Button } from '../../components/ui';
+import { useFocusEffect } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ScreenContainer, Text, Card } from '../../components/ui';
 import { useTheme } from '../../theme';
+import { WorkoutHistory } from '../../types/workout';
 
-interface WorkoutHistory {
-  date: string;
-  duration: number; // en minutos
-  exercises: string[];
-}
+const HistoryCard = ({ workout, index, theme }: { workout: any; index: number; theme: any }) => {
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const translateY = React.useRef(new Animated.Value(20)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        delay: index * 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: 0,
+        friction: 8,
+        delay: index * 100,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, []);
+
+  return (
+    <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
+      <Card style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text variant="h3">{workout.date}</Text>
+          <Text variant="stat" color={theme.colors.primary}>{workout.duration} min</Text>
+        </View>
+        
+        <View style={styles.statsRow}>
+          <Text variant="caption" color={theme.colors.textSecondary}>
+            Ejercicios: {workout.exercises?.length || 0}
+          </Text>
+          <Text variant="caption" color={theme.colors.textSecondary}>
+            Volumen Total: {workout.totalKg || 0} kg
+          </Text>
+        </View>
+
+        <View style={styles.exercisesContainer}>
+          {workout.exercises?.map((exercise: any, idx: number) => {
+            if (typeof exercise === 'string') {
+              return (
+                <View key={idx} style={styles.exerciseRow}>
+                  <Text variant="body" style={{ flex: 1 }}>• {exercise}</Text>
+                  <Text variant="caption" color={theme.colors.textMuted} style={{ flex: 1, textAlign: 'right' }}>
+                    Antiguo formato
+                  </Text>
+                </View>
+              );
+            }
+
+            const setsDesc = exercise.sets && Array.isArray(exercise.sets)
+              ? exercise.sets.filter((s: any) => s.reps > 0).map((s: any) => `${s.reps}x${s.weight}kg`).join(', ')
+              : '';
+              
+            return (
+              <View key={idx} style={styles.exerciseRow}>
+                <Text variant="body" style={{ flex: 1 }}>• {exercise.name}</Text>
+                <Text variant="caption" color={theme.colors.textMuted} style={{ flex: 1, textAlign: 'right' }}>
+                  {setsDesc || 'Sin series registradas'}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      </Card>
+    </Animated.View>
+  );
+};
 
 export default function HistoryScreen() {
   const [history, setHistory] = useState<WorkoutHistory[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const theme = useTheme();
-
-  useEffect(() => {
-    loadHistory();
-  }, []);
 
   const loadHistory = async () => {
     try {
       const storedHistory = await AsyncStorage.getItem('workoutHistory');
       if (storedHistory) {
         setHistory(JSON.parse(storedHistory));
+      } else {
+        setHistory([]);
       }
     } catch (error) {
       console.error('Error loading history:', error);
     }
   };
 
-  const saveHistory = async (newHistory: WorkoutHistory[]) => {
-    try {
-      await AsyncStorage.setItem('workoutHistory', JSON.stringify(newHistory));
-      setHistory(newHistory);
-    } catch (error) {
-      console.error('Error saving history:', error);
-    }
-  };
+  useFocusEffect(
+    useCallback(() => {
+      loadHistory();
+    }, [])
+  );
 
-  const addSampleWorkout = () => {
-    const sampleWorkout: WorkoutHistory = {
-      date: new Date().toLocaleDateString(),
-      duration: 45,
-      exercises: ['Push-ups', 'Squats', 'Plank'],
-    };
-    const newHistory = [sampleWorkout, ...history];
-    saveHistory(newHistory);
-    Alert.alert('Entrenamiento agregado', 'Se ha agregado un entrenamiento de ejemplo.');
-  };
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadHistory();
+    setRefreshing(false);
+  }, []);
 
   return (
-    <ScreenContainer scrollable={true}>
+    <ScreenContainer 
+      scrollable={true} 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
+      }
+    >
       <View style={styles.header}>
         <Text variant="h1">Historial</Text>
       </View>
       
-      <Button 
-        onPress={addSampleWorkout}
-        variant="primary"
-        style={{ marginBottom: 24 }}
-      >
-        Agregar Entrenamiento de Ejemplo
-      </Button>
-      
       {history.length === 0 ? (
         <View style={styles.emptyContainer}>
+          <MaterialCommunityIcons name="clipboard-text-off-outline" size={64} color={theme.colors.textMuted} />
+          <Text variant="h3" style={{ marginTop: 16, marginBottom: 8, textAlign: 'center' }}>
+            Aún no hay entrenamientos
+          </Text>
           <Text variant="body" color={theme.colors.textSecondary} style={{ textAlign: 'center' }}>
-            No hay entrenamientos registrados aún.
+            Tu historial está vacío. ¡Ve a la pestaña de entrenar y registra tu primera sesión!
           </Text>
         </View>
       ) : (
         history.map((workout, index) => (
-          <Card key={index} style={styles.card}>
-            <Text variant="h3" style={{ marginBottom: 8 }}>Fecha: {workout.date}</Text>
-            <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: 12 }}>
-              Duración: {workout.duration} minutos
-            </Text>
-            <Text variant="h4" style={{ marginBottom: 8 }}>Ejercicios realizados:</Text>
-            {workout.exercises.map((exercise, idx) => (
-              <Text key={idx} variant="body" color={theme.colors.textSecondary} style={{ marginLeft: 8, marginBottom: 4 }}>
-                • {exercise}
-              </Text>
-            ))}
-          </Card>
+          <HistoryCard key={workout.id || index} workout={workout} index={index} theme={theme} />
         ))
       )}
     </ScreenContainer>
@@ -96,9 +144,35 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+  },
+  exercisesContainer: {
+    gap: 8,
+  },
+  exerciseRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   emptyContainer: {
     padding: 32,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 64,
   }
 });

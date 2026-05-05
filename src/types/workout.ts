@@ -16,3 +16,11 @@ export interface ActiveWorkout {
   startTime: string; // ISO string
   exercises: WorkoutExercise[];
 }
+
+export interface WorkoutHistory {
+  id: string;
+  date: string;
+  duration: number; // en minutos
+  totalKg: number;
+  exercises: WorkoutExercise[];
+}
