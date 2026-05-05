@@ -5,8 +5,13 @@ import { useTheme } from '../../theme';
 import { ActiveWorkout, WorkoutExercise, WorkoutSet } from '../../types/workout';
 import { WorkoutService } from '../../services/WorkoutService';
 import { WorkoutExerciseCard, RestTimer } from '../../components/workout';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { MainTabParamList } from '../../navigation/types';
 
-export default function WorkoutScreen() {
+type Props = BottomTabScreenProps<MainTabParamList, 'WorkoutScreen'>;
+
+export default function WorkoutScreen({ route, navigation }: Props) {
   const theme = useTheme();
   const [activeWorkout, setActiveWorkout] = useState<ActiveWorkout | null>(null);
   const [newExerciseName, setNewExerciseName] = useState('');
@@ -14,6 +19,14 @@ export default function WorkoutScreen() {
   useEffect(() => {
     loadActiveWorkout();
   }, []);
+
+  useEffect(() => {
+    if (route.params?.routineExercises && !activeWorkout) {
+      startWorkoutWithExercises(route.params.routineExercises);
+      // Clear the params so it doesn't restart if navigated back
+      navigation.setParams({ routineExercises: undefined });
+    }
+  }, [route.params?.routineExercises]);
 
   const loadActiveWorkout = async () => {
     const workout = await WorkoutService.getActiveWorkout();
@@ -36,6 +49,19 @@ export default function WorkoutScreen() {
     await saveWorkoutState(newWorkout);
   };
 
+  const startWorkoutWithExercises = async (exerciseNames: string[]) => {
+    const newWorkout: ActiveWorkout = {
+      id: Date.now().toString(),
+      startTime: new Date().toISOString(),
+      exercises: exerciseNames.map(name => ({
+        id: Math.random().toString(),
+        name,
+        sets: [{ id: Math.random().toString(), reps: 0, weight: 0, completed: false }]
+      })),
+    };
+    await saveWorkoutState(newWorkout);
+  };
+
   const finishWorkout = async () => {
     Alert.alert(
       "Finalizar Entrenamiento",
@@ -51,7 +77,8 @@ export default function WorkoutScreen() {
             }
             await WorkoutService.clearActiveWorkout();
             setActiveWorkout(null);
-          } 
+            Alert.alert("¡Entrenamiento completado!", "Se ha guardado en tu historial.");
+          }  
         }
       ]
     );
