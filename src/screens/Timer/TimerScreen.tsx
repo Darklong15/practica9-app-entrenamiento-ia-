@@ -78,9 +78,9 @@ export default function TimerScreen({ route }: Props) {
         </Text>
 
         <View style={styles.quickButtonsRow}>
-          <Button variant="secondary" onPress={() => setTimer(60)}>60s</Button>
-          <Button variant="secondary" onPress={() => setTimer(90)}>90s</Button>
-          <Button variant="secondary" onPress={() => setTimer(120)}>120s</Button>
+          <Button variant="secondary" size="sm" onPress={() => setTimer(60)}>60s</Button>
+          <Button variant="secondary" size="sm" onPress={() => setTimer(90)}>90s</Button>
+          <Button variant="secondary" size="sm" onPress={() => setTimer(120)}>120s</Button>
         </View>
 
         <View style={styles.customRow}>
@@ -106,7 +106,7 @@ export default function TimerScreen({ route }: Props) {
             {isActive ? 'Pausar' : 'Iniciar'}
           </Button>
           <Button 
-            variant="danger" 
+            variant="ghost" 
             onPress={resetTimer}
             style={styles.controlBtn}
           >
