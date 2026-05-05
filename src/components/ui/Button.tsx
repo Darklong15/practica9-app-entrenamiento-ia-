@@ -88,7 +88,10 @@ export default function Button({
           <Text
             variant={getTextVariant()}
             color={getTextColor()}
-            style={{ marginLeft: icon ? theme.spacing.xs : 0 }}
+            style={{ 
+              marginLeft: icon ? theme.spacing.xs : 0,
+              fontFamily: theme.typography.fonts.inter.semiBold 
+            }}
             align="center"
           >
             {children}

@@ -6,7 +6,7 @@ import { useTheme } from '../../theme';
 export default function ExercisesScreen() {
   const theme = useTheme();
   return (
-    <ScreenContainer>
+    <ScreenContainer scrollable={true}>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text variant="h1">Ejercicios</Text>
         <Text variant="body" color={theme.colors.textSecondary} style={{ marginTop: 8 }}>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../theme';
 import { RootStackParamList, MainTabParamList } from './types';
-import { Text } from '../components/ui';
 
 // Screens
 import DashboardScreen from '../screens/Dashboard/DashboardScreen';
@@ -41,7 +41,7 @@ const MainTabs = () => {
         component={DashboardScreen}
         options={{
           tabBarLabel: 'Inicio',
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="home" size={24} color={color} />,
         }}
       />
       <Tab.Screen
@@ -49,7 +49,7 @@ const MainTabs = () => {
         component={WorkoutScreen}
         options={{
           tabBarLabel: 'Entrenar',
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>💪</Text>,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="dumbbell" size={24} color={color} />,
         }}
       />
       <Tab.Screen
@@ -57,7 +57,7 @@ const MainTabs = () => {
         component={HistoryScreen}
         options={{
           tabBarLabel: 'Historial',
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📋</Text>,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="clipboard-text-clock" size={24} color={color} />,
         }}
       />
       <Tab.Screen
@@ -65,7 +65,7 @@ const MainTabs = () => {
         component={ExercisesScreen}
         options={{
           tabBarLabel: 'Ejercicios',
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📚</Text>,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="book-open-variant" size={24} color={color} />,
         }}
       />
       <Tab.Screen
@@ -73,7 +73,7 @@ const MainTabs = () => {
         component={ProgressScreen}
         options={{
           tabBarLabel: 'Progreso',
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📈</Text>,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="chart-line" size={24} color={color} />,
         }}
       />
     </Tab.Navigator>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScreenContainer, Text, Card, Badge } from '../../components/ui';
 import { useTheme } from '../../theme';
 
@@ -23,7 +24,10 @@ export default function DashboardScreen() {
         
         {/* 1. HEADER */}
         <View>
-          <Text variant="h1">Hola, Atleta 💪</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+            <Text variant="h1">Hola, Atleta</Text>
+            <MaterialCommunityIcons name="arm-flex" size={28} color={theme.colors.primary} />
+          </View>
           <Text variant="caption" color={theme.colors.textSecondary} style={{ marginTop: theme.spacing.xs }}>
             {capitalizedDate}
           </Text>
@@ -62,14 +66,14 @@ export default function DashboardScreen() {
               style={[styles.quickAccessCard, { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, padding: theme.spacing.md }]}
               onPress={() => navigation.navigate('WorkoutScreen')}
             >
-              <Text style={{ fontSize: 28, marginBottom: theme.spacing.sm }}>💪</Text>
+              <MaterialCommunityIcons name="dumbbell" size={32} color={theme.colors.primary} style={{ marginBottom: theme.spacing.sm }} />
               <Text variant="body">Entrenar</Text>
             </Pressable>
             <Pressable 
               style={[styles.quickAccessCard, { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, padding: theme.spacing.md }]}
               onPress={() => navigation.navigate('HistoryScreen')}
             >
-              <Text style={{ fontSize: 28, marginBottom: theme.spacing.sm }}>📋</Text>
+              <MaterialCommunityIcons name="clipboard-text-clock" size={32} color={theme.colors.primary} style={{ marginBottom: theme.spacing.sm }} />
               <Text variant="body">Historial</Text>
             </Pressable>
           </View>
@@ -78,14 +82,14 @@ export default function DashboardScreen() {
               style={[styles.quickAccessCard, { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, padding: theme.spacing.md }]}
               onPress={() => navigation.navigate('ExercisesScreen')}
             >
-              <Text style={{ fontSize: 28, marginBottom: theme.spacing.sm }}>📚</Text>
+              <MaterialCommunityIcons name="book-open-variant" size={32} color={theme.colors.primary} style={{ marginBottom: theme.spacing.sm }} />
               <Text variant="body">Ejercicios</Text>
             </Pressable>
             <Pressable 
               style={[styles.quickAccessCard, { backgroundColor: theme.colors.surface, borderRadius: theme.borderRadius.md, padding: theme.spacing.md }]}
               onPress={() => navigation.navigate('TimerScreen')}
             >
-              <Text style={{ fontSize: 28, marginBottom: theme.spacing.sm }}>⏱️</Text>
+              <MaterialCommunityIcons name="timer-outline" size={32} color={theme.colors.primary} style={{ marginBottom: theme.spacing.sm }} />
               <Text variant="body">Temporizador</Text>
             </Pressable>
           </View>
@@ -120,7 +124,7 @@ export default function DashboardScreen() {
         {/* 5. SECCIÓN "Rutinas Sugeridas" */}
         <View style={{ gap: theme.spacing.md }}>
           <Text variant="h3">Rutinas</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: theme.spacing.md }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} nestedScrollEnabled={true} contentContainerStyle={{ gap: theme.spacing.md }}>
             <Card style={{ width: 260 }}>
               <Badge variant="primary" label="PUSH" style={{ marginBottom: theme.spacing.sm }} />
               <Text variant="h3" style={{ marginBottom: theme.spacing.xs }}>Push Day</Text>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, View, StyleProp, ViewStyle } from 'react-native';
+import { ScrollView, View, StyleProp, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../theme';
 
 export interface ScreenContainerProps {
@@ -24,19 +25,20 @@ export default function ScreenContainer({
     return theme.spacing.md;
   };
 
-  const contentStyle = [
-    { flex: 1, paddingHorizontal: getPadding() },
-    style,
-  ];
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {scrollable ? (
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={contentStyle} keyboardShouldPersistTaps="handled">
+        <ScrollView 
+          style={{ flex: 1 }} 
+          contentContainerStyle={[{ flexGrow: 1, paddingHorizontal: getPadding(), paddingBottom: 32 }, style]} 
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+          keyboardShouldPersistTaps="handled"
+        >
           {children}
         </ScrollView>
       ) : (
-        <View style={contentStyle}>{children}</View>
+        <View style={[{ flex: 1, paddingHorizontal: getPadding() }, style]}>{children}</View>
       )}
     </SafeAreaView>
   );
