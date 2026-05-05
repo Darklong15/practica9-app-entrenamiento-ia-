@@ -6,7 +6,7 @@ import { useTheme } from '../../theme';
 export default function HistoryScreen() {
   const theme = useTheme();
   return (
-    <ScreenContainer>
+    <ScreenContainer scrollable={true}>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text variant="h1">Historial</Text>
         <Text variant="body" color={theme.colors.textSecondary} style={{ marginTop: 8 }}>
