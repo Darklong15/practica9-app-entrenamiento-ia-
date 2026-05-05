@@ -25,6 +25,7 @@ export default function WorkoutSetRow({ set, index, onUpdate }: WorkoutSetRowPro
         placeholder="kg"
         keyboardType="numeric"
         containerStyle={styles.inputContainer}
+        inputStyle={styles.compactInput}
       />
       
       <Input
@@ -33,10 +34,11 @@ export default function WorkoutSetRow({ set, index, onUpdate }: WorkoutSetRowPro
         placeholder="reps"
         keyboardType="numeric"
         containerStyle={styles.inputContainer}
+        inputStyle={styles.compactInput}
       />
 
       <Button
-        variant={set.completed ? "primary" : "secondary"}
+        variant={set.completed ? "success" : "secondary"}
         onPress={() => onUpdate(set.id, 'completed', !set.completed)}
         style={styles.checkButton}
       >
@@ -51,19 +53,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
-    gap: 8,
+    paddingHorizontal: 8,
   },
   indexText: {
-    width: 24,
+    width: 32,
     textAlign: 'center',
   },
   inputContainer: {
     flex: 1,
+    marginHorizontal: 4,
+  },
+  compactInput: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    textAlign: 'center',
+    fontSize: 14,
   },
   checkButton: {
-    width: 48,
-    height: 48,
+    width: 40,
+    height: 40,
     paddingHorizontal: 0,
     paddingVertical: 0,
+    marginLeft: 4,
   }
 });

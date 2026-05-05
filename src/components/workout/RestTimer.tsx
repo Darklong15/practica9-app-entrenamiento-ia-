@@ -17,7 +17,6 @@ export default function RestTimer() {
       }, 1000);
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
-      // Opcionalmente: reproducir sonido o vibrar cuando acabe
     }
     
     return () => {
@@ -61,7 +60,7 @@ export default function RestTimer() {
       <Text variant="h3" style={styles.title}>Temporizador de Descanso</Text>
       
       <Text 
-        variant="h1" 
+        variant="stat" 
         style={styles.timeDisplay} 
         color={timeLeft > 0 ? theme.colors.primary : theme.colors.textPrimary}
       >
@@ -76,13 +75,14 @@ export default function RestTimer() {
 
       <View style={styles.customRow}>
         <Input
-          placeholder="Segundos (ej. 45)"
+          placeholder="Segs"
           value={customTime}
           onChangeText={setCustomTime}
           keyboardType="numeric"
           containerStyle={styles.customInput}
+          inputStyle={styles.compactInput}
         />
-        <Button variant="secondary" onPress={setCustom} disabled={!customTime.trim()}>
+        <Button variant="secondary" size="sm" onPress={setCustom} disabled={!customTime.trim()}>
           Fijar
         </Button>
       </View>
@@ -110,38 +110,43 @@ export default function RestTimer() {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    marginBottom: 16,
     alignItems: 'center',
+    padding: 16,
   },
   title: {
-    marginBottom: 16,
+    marginBottom: 8,
   },
   timeDisplay: {
-    fontSize: 48,
-    marginBottom: 24,
+    marginBottom: 16,
+    fontSize: 40,
   },
   quickButtonsRow: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 16,
-    width: '100%',
+    marginBottom: 12,
     justifyContent: 'center',
+    width: '100%',
   },
   customRow: {
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
     width: '100%',
-    paddingHorizontal: 8,
+    justifyContent: 'center',
   },
   customInput: {
-    flex: 1,
+    width: 80,
     marginBottom: 0,
+  },
+  compactInput: {
+    paddingVertical: 6,
+    textAlign: 'center',
   },
   controlsRow: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 12,
     width: '100%',
     justifyContent: 'center',
   },

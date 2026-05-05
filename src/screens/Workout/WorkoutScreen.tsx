@@ -172,11 +172,12 @@ export default function WorkoutScreen() {
             containerStyle={styles.exerciseInput}
           />
           <Button
+            variant="secondary"
             onPress={addExercise}
             disabled={!newExerciseName.trim()}
             style={styles.exerciseAddButton}
           >
-            Agregar
+            + Agregar Nuevo Ejercicio
           </Button>
         </View>
         <View style={styles.spacer} />
@@ -206,17 +207,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   addExerciseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
     marginTop: 8,
     marginBottom: 24,
+    width: '100%',
   },
   exerciseInput: {
-    flex: 1,
-    marginBottom: 0,
+    width: '100%',
+    marginBottom: 12,
   },
   exerciseAddButton: {
-    marginLeft: 8,
+    width: '100%',
   },
   spacer: {
     height: 40,

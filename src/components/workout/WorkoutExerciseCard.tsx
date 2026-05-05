@@ -24,16 +24,16 @@ export default function WorkoutExerciseCard({
     <Card style={styles.card}>
       <View style={styles.header}>
         <Text variant="h3">{exercise.name}</Text>
-        <Button variant="ghost" size="sm" onPress={() => onRemoveExercise(exercise.id)}>
+        <Button variant="ghost" size="sm" onPress={() => onRemoveExercise(exercise.id)} style={styles.removeBtn}>
           X
         </Button>
       </View>
 
       <View style={styles.labelsRow}>
-        <Text variant="label" color={theme.colors.textSecondary} style={styles.labelIndex}>Set</Text>
-        <Text variant="label" color={theme.colors.textSecondary} style={styles.labelInput}>kg</Text>
-        <Text variant="label" color={theme.colors.textSecondary} style={styles.labelInput}>Reps</Text>
-        <Text variant="label" color={theme.colors.textSecondary} style={styles.labelCheck}>✓</Text>
+        <Text variant="caption" color={theme.colors.textSecondary} style={styles.labelIndex}>SET</Text>
+        <Text variant="caption" color={theme.colors.textSecondary} style={styles.labelInput}>KG</Text>
+        <Text variant="caption" color={theme.colors.textSecondary} style={styles.labelInput}>REPS</Text>
+        <Text variant="caption" color={theme.colors.textSecondary} style={styles.labelCheck}>✓</Text>
       </View>
 
       {exercise.sets.map((set, index) => (
@@ -60,32 +60,40 @@ export default function WorkoutExerciseCard({
 const styles = StyleSheet.create({
   card: {
     marginBottom: 16,
+    padding: 12,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  removeBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   labelsRow: {
     flexDirection: 'row',
     marginBottom: 8,
     paddingHorizontal: 8,
-    gap: 8,
   },
   labelIndex: {
-    width: 24,
+    width: 32,
     textAlign: 'center',
   },
   labelInput: {
     flex: 1,
     textAlign: 'center',
+    marginHorizontal: 4,
   },
   labelCheck: {
     width: 40,
     textAlign: 'center',
+    marginLeft: 4,
   },
   addButton: {
     marginTop: 8,
+    alignSelf: 'center',
   }
 });
