@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Input, Text } from '../ui';
+import { View, StyleSheet } from 'react-native';
+import { Input, Text, Button } from '../ui';
 import { useTheme } from '../../theme';
 import { WorkoutSet } from '../../types/workout';
 
@@ -25,6 +25,7 @@ export default function WorkoutSetRow({ set, index, onUpdate }: WorkoutSetRowPro
         placeholder="kg"
         keyboardType="numeric"
         containerStyle={styles.inputContainer}
+        inputStyle={styles.compactInput}
       />
       
       <Input
@@ -33,17 +34,16 @@ export default function WorkoutSetRow({ set, index, onUpdate }: WorkoutSetRowPro
         placeholder="reps"
         keyboardType="numeric"
         containerStyle={styles.inputContainer}
+        inputStyle={styles.compactInput}
       />
 
-      <TouchableOpacity
-        style={[
-          styles.checkButton,
-          { backgroundColor: set.completed ? theme.colors.primary : theme.colors.surface }
-        ]}
+      <Button
+        variant={set.completed ? "success" : "secondary"}
         onPress={() => onUpdate(set.id, 'completed', !set.completed)}
+        style={styles.checkButton}
       >
-        <Text color={set.completed ? theme.colors.background : theme.colors.textMuted}>✓</Text>
-      </TouchableOpacity>
+        {set.completed ? "✓" : " "}
+      </Button>
     </View>
   );
 }
@@ -53,22 +53,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
-    gap: 8,
+    paddingHorizontal: 8,
   },
   indexText: {
-    width: 24,
+    width: 32,
     textAlign: 'center',
   },
   inputContainer: {
     flex: 1,
+    marginHorizontal: 4,
+  },
+  compactInput: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    textAlign: 'center',
+    fontSize: 14,
   },
   checkButton: {
     width: 40,
     height: 40,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#333', // fallback border
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    marginLeft: 4,
   }
 });

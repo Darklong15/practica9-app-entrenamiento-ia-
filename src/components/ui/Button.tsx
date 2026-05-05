@@ -4,7 +4,7 @@ import { useTheme } from '../../theme';
 import Text from './Text';
 
 export interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
   size?: 'sm' | 'md' | 'lg';
   onPress?: () => void;
   disabled?: boolean;
@@ -31,6 +31,7 @@ export default function Button({
     if (variant === 'secondary') return theme.colors.surface;
     if (variant === 'ghost') return 'transparent';
     if (variant === 'danger') return theme.colors.error;
+    if (variant === 'success') return theme.colors.success;
     return theme.colors.primary;
   };
 
@@ -38,7 +39,7 @@ export default function Button({
     if (variant === 'primary') return theme.colors.background;
     if (variant === 'secondary') return theme.colors.textPrimary;
     if (variant === 'ghost') return theme.colors.primary;
-    if (variant === 'danger') return '#FFFFFF';
+    if (variant === 'danger' || variant === 'success') return '#FFFFFF';
     return theme.colors.background;
   };
 
