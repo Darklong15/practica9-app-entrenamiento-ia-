@@ -8,6 +8,7 @@ export interface ScreenContainerProps {
   scrollable?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   style?: StyleProp<ViewStyle>;
+  refreshControl?: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
 
 export default function ScreenContainer({
@@ -15,6 +16,7 @@ export default function ScreenContainer({
   scrollable = false,
   padding = 'md',
   style,
+  refreshControl,
 }: ScreenContainerProps) {
   const theme = useTheme();
 
@@ -34,6 +36,7 @@ export default function ScreenContainer({
           showsVerticalScrollIndicator={false}
           bounces={true}
           keyboardShouldPersistTaps="handled"
+          refreshControl={refreshControl}
         >
           {children}
         </ScrollView>
