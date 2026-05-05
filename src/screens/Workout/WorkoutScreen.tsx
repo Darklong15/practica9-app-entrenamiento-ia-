@@ -5,8 +5,13 @@ import { useTheme } from '../../theme';
 import { ActiveWorkout, WorkoutExercise, WorkoutSet } from '../../types/workout';
 import { WorkoutService } from '../../services/WorkoutService';
 import { WorkoutExerciseCard, RestTimer } from '../../components/workout';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { MainTabParamList } from '../../navigation/types';
 
-export default function WorkoutScreen() {
+type Props = BottomTabScreenProps<MainTabParamList, 'WorkoutScreen'>;
+
+export default function WorkoutScreen({ route, navigation }: Props) {
   const theme = useTheme();
   const [activeWorkout, setActiveWorkout] = useState<ActiveWorkout | null>(null);
   const [newExerciseName, setNewExerciseName] = useState('');
@@ -14,6 +19,14 @@ export default function WorkoutScreen() {
   useEffect(() => {
     loadActiveWorkout();
   }, []);
+
+  useEffect(() => {
+    if (route.params?.routineExercises && !activeWorkout) {
+      startWorkoutWithExercises(route.params.routineExercises);
+      // Clear the params so it doesn't restart if navigated back
+      navigation.setParams({ routineExercises: undefined });
+    }
+  }, [route.params?.routineExercises]);
 
   const loadActiveWorkout = async () => {
     const workout = await WorkoutService.getActiveWorkout();
@@ -36,6 +49,19 @@ export default function WorkoutScreen() {
     await saveWorkoutState(newWorkout);
   };
 
+  const startWorkoutWithExercises = async (exerciseNames: string[]) => {
+    const newWorkout: ActiveWorkout = {
+      id: Date.now().toString(),
+      startTime: new Date().toISOString(),
+      exercises: exerciseNames.map(name => ({
+        id: Math.random().toString(),
+        name,
+        sets: [{ id: Math.random().toString(), reps: 0, weight: 0, completed: false }]
+      })),
+    };
+    await saveWorkoutState(newWorkout);
+  };
+
   const finishWorkout = async () => {
     Alert.alert(
       "Finalizar Entrenamiento",
@@ -46,9 +72,45 @@ export default function WorkoutScreen() {
           text: "Finalizar", 
           style: "destructive",
           onPress: async () => {
+            if (activeWorkout) {
+              try {
+                // Calcular duracion en minutos
+                const start = new Date(activeWorkout.startTime).getTime();
+                const end = new Date().getTime();
+                const durationMinutes = Math.max(Math.round((end - start) / 60000), 1); // min 1 minuto
+
+                // Calcular volumen total
+                let totalKg = 0;
+                activeWorkout.exercises.forEach(ex => {
+                  ex.sets.forEach(set => {
+                    totalKg += (set.reps * set.weight);
+                  });
+                });
+
+                const workoutHistoryItem = {
+                  id: Date.now().toString(),
+                  date: new Date().toLocaleDateString(),
+                  duration: durationMinutes,
+                  totalKg,
+                  exercises: activeWorkout.exercises,
+                };
+
+                const storedHistory = await AsyncStorage.getItem('workoutHistory');
+                let history = [];
+                if (storedHistory) {
+                  history = JSON.parse(storedHistory);
+                }
+                history = [workoutHistoryItem, ...history];
+                await AsyncStorage.setItem('workoutHistory', JSON.stringify(history));
+              } catch (error) {
+                console.error("Error saving workout to history", error);
+              }
+            }
+
             await WorkoutService.clearActiveWorkout();
             setActiveWorkout(null);
-          } 
+            Alert.alert("¡Entrenamiento completado!", "Se ha guardado en tu historial.");
+          }  
         }
       ]
     );
