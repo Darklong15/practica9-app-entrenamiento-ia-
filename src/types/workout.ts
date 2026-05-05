@@ -14,5 +14,6 @@ export interface WorkoutExercise {
 export interface ActiveWorkout {
   id: string;
   startTime: string; // ISO string
+  endTime?: string; // ISO string
   exercises: WorkoutExercise[];
 }

@@ -46,6 +46,9 @@ export default function WorkoutScreen() {
           text: "Finalizar", 
           style: "destructive",
           onPress: async () => {
+            if (activeWorkout) {
+              await WorkoutService.saveWorkoutToHistory(activeWorkout);
+            }
             await WorkoutService.clearActiveWorkout();
             setActiveWorkout(null);
           } 

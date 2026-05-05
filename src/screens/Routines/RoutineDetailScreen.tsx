@@ -62,15 +62,16 @@ export default function RoutineDetailScreen() {
       ) : (
         <View>
           <Button 
-            title="← Volver" 
             onPress={goBack}
-            variant="outline"
+            variant="secondary"
             style={styles.backButton}
-          />
+          >
+            ← Volver
+          </Button>
           <Text variant="h2" style={styles.selectedTitle}>Rutina: {selectedRoutine.name}</Text>
           <Text variant="h3" style={styles.exercisesTitle}>Ejercicios:</Text>
           {selectedRoutine.exercises.map((exercise, index) => (
-            <Card key={index} style={styles.exerciseCard} variant="elevated">
+            <Card key={index} style={styles.exerciseCard}>
               <Text variant="body" style={styles.exerciseName}>{exercise}</Text>
             </Card>
           ))}
