@@ -1,5 +1,6 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, View, StyleProp, ViewStyle } from 'react-native';
+import { ScrollView, View, StyleProp, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../theme';
 
 export interface ScreenContainerProps {
