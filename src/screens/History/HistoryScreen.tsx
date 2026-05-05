@@ -56,11 +56,12 @@ export default function HistoryScreen() {
       </View>
       
       <Button 
-        title="Agregar Entrenamiento de Ejemplo" 
         onPress={addSampleWorkout}
         variant="primary"
         style={{ marginBottom: 24 }}
-      />
+      >
+        Agregar Entrenamiento de Ejemplo
+      </Button>
       
       {history.length === 0 ? (
         <View style={styles.emptyContainer}>

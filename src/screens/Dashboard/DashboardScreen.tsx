@@ -125,19 +125,23 @@ export default function DashboardScreen() {
         <View style={{ gap: theme.spacing.md }}>
           <Text variant="h3">Rutinas</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} nestedScrollEnabled={true} contentContainerStyle={{ gap: theme.spacing.md }}>
-            <Card style={{ width: 260 }}>
-              <Badge variant="primary" label="PUSH" style={{ marginBottom: theme.spacing.sm }} />
-              <Text variant="h3" style={{ marginBottom: theme.spacing.xs }}>Push Day</Text>
-              <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.sm }}>Pecho, Hombros, Tríceps</Text>
-              <Text variant="caption" color={theme.colors.textMuted}>5 ejercicios • ~45 min</Text>
-            </Card>
+            <Pressable onPress={() => navigation.navigate('RoutineDetailScreen', { routineName: 'Push Day' })}>
+              <Card style={{ width: 260 }}>
+                <Badge variant="primary" label="PUSH" style={{ marginBottom: theme.spacing.sm }} />
+                <Text variant="h3" style={{ marginBottom: theme.spacing.xs }}>Push Day</Text>
+                <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.sm }}>Pecho, Hombros, Tríceps</Text>
+                <Text variant="caption" color={theme.colors.textMuted}>5 ejercicios • ~45 min</Text>
+              </Card>
+            </Pressable>
 
-            <Card style={{ width: 260 }}>
-              <Badge variant="default" label="PULL" style={{ marginBottom: theme.spacing.sm }} />
-              <Text variant="h3" style={{ marginBottom: theme.spacing.xs }}>Pull Day</Text>
-              <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.sm }}>Espalda, Bíceps</Text>
-              <Text variant="caption" color={theme.colors.textMuted}>6 ejercicios • ~50 min</Text>
-            </Card>
+            <Pressable onPress={() => navigation.navigate('RoutineDetailScreen', { routineName: 'Pull Day' })}>
+              <Card style={{ width: 260 }}>
+                <Badge variant="default" label="PULL" style={{ marginBottom: theme.spacing.sm }} />
+                <Text variant="h3" style={{ marginBottom: theme.spacing.xs }}>Pull Day</Text>
+                <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.sm }}>Espalda, Bíceps</Text>
+                <Text variant="caption" color={theme.colors.textMuted}>6 ejercicios • ~50 min</Text>
+              </Card>
+            </Pressable>
           </ScrollView>
         </View>
 
