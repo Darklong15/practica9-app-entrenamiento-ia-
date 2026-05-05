@@ -73,40 +73,8 @@ export default function WorkoutScreen({ route, navigation }: Props) {
           style: "destructive",
           onPress: async () => {
             if (activeWorkout) {
-              try {
-                // Calcular duracion en minutos
-                const start = new Date(activeWorkout.startTime).getTime();
-                const end = new Date().getTime();
-                const durationMinutes = Math.max(Math.round((end - start) / 60000), 1); // min 1 minuto
-
-                // Calcular volumen total
-                let totalKg = 0;
-                activeWorkout.exercises.forEach(ex => {
-                  ex.sets.forEach(set => {
-                    totalKg += (set.reps * set.weight);
-                  });
-                });
-
-                const workoutHistoryItem = {
-                  id: Date.now().toString(),
-                  date: new Date().toLocaleDateString(),
-                  duration: durationMinutes,
-                  totalKg,
-                  exercises: activeWorkout.exercises,
-                };
-
-                const storedHistory = await AsyncStorage.getItem('workoutHistory');
-                let history = [];
-                if (storedHistory) {
-                  history = JSON.parse(storedHistory);
-                }
-                history = [workoutHistoryItem, ...history];
-                await AsyncStorage.setItem('workoutHistory', JSON.stringify(history));
-              } catch (error) {
-                console.error("Error saving workout to history", error);
-              }
+              await WorkoutService.saveWorkoutToHistory(activeWorkout);
             }
-
             await WorkoutService.clearActiveWorkout();
             setActiveWorkout(null);
             Alert.alert("¡Entrenamiento completado!", "Se ha guardado en tu historial.");

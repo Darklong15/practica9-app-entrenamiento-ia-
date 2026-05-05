@@ -1,92 +1,20 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, RefreshControl, Animated } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ScreenContainer, Text, Card } from '../../components/ui';
+import { ScreenContainer, Text, Card, Button } from '../../components/ui';
 import { useTheme } from '../../theme';
-import { WorkoutHistory } from '../../types/workout';
-
-const HistoryCard = ({ workout, index, theme }: { workout: any; index: number; theme: any }) => {
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const translateY = React.useRef(new Animated.Value(20)).current;
-
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        delay: index * 100,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateY, {
-        toValue: 0,
-        friction: 8,
-        delay: index * 100,
-        useNativeDriver: true,
-      })
-    ]).start();
-  }, []);
-
-  return (
-    <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY }] }}>
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text variant="h3">{workout.date}</Text>
-          <Text variant="stat" color={theme.colors.primary}>{workout.duration} min</Text>
-        </View>
-        
-        <View style={styles.statsRow}>
-          <Text variant="caption" color={theme.colors.textSecondary}>
-            Ejercicios: {workout.exercises?.length || 0}
-          </Text>
-          <Text variant="caption" color={theme.colors.textSecondary}>
-            Volumen Total: {workout.totalKg || 0} kg
-          </Text>
-        </View>
-
-        <View style={styles.exercisesContainer}>
-          {workout.exercises?.map((exercise: any, idx: number) => {
-            if (typeof exercise === 'string') {
-              return (
-                <View key={idx} style={styles.exerciseRow}>
-                  <Text variant="body" style={{ flex: 1 }}>• {exercise}</Text>
-                  <Text variant="caption" color={theme.colors.textMuted} style={{ flex: 1, textAlign: 'right' }}>
-                    Antiguo formato
-                  </Text>
-                </View>
-              );
-            }
-
-            const setsDesc = exercise.sets && Array.isArray(exercise.sets)
-              ? exercise.sets.filter((s: any) => s.reps > 0).map((s: any) => `${s.reps}x${s.weight}kg`).join(', ')
-              : '';
-              
-            return (
-              <View key={idx} style={styles.exerciseRow}>
-                <Text variant="body" style={{ flex: 1 }}>• {exercise.name}</Text>
-                <Text variant="caption" color={theme.colors.textMuted} style={{ flex: 1, textAlign: 'right' }}>
-                  {setsDesc || 'Sin series registradas'}
-                </Text>
-              </View>
-            );
-          })}
-        </View>
-      </Card>
-    </Animated.View>
-  );
-};
+import { ActiveWorkout } from '../../types/workout';
 
 export default function HistoryScreen() {
-  const [history, setHistory] = useState<WorkoutHistory[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const [history, setHistory] = useState<ActiveWorkout[]>([]);
   const theme = useTheme();
 
   const loadHistory = async () => {
     try {
-      const storedHistory = await AsyncStorage.getItem('workoutHistory');
-      if (storedHistory) {
-        setHistory(JSON.parse(storedHistory));
+      const historyJson = await AsyncStorage.getItem('@workout_history');
+      if (historyJson) {
+        setHistory(JSON.parse(historyJson));
       } else {
         setHistory([]);
       }
@@ -101,11 +29,39 @@ export default function HistoryScreen() {
     }, [])
   );
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await loadHistory();
-    setRefreshing(false);
-  }, []);
+  const loadSampleData = async () => {
+    const SAMPLE_DATA: ActiveWorkout[] = [
+      {
+        id: 'sample-1',
+        startTime: new Date(Date.now() - 86400000).toISOString(),
+        endTime: new Date(Date.now() - 86400000 + 3600000).toISOString(),
+        exercises: [
+          {
+            id: 'ex-1', name: 'Press de Banca',
+            sets: [{ id: 'set-1', reps: 10, weight: 60, completed: true }, { id: 'set-2', reps: 8, weight: 65, completed: true }]
+          }
+        ]
+      },
+      {
+        id: 'sample-2',
+        startTime: new Date(Date.now() - 172800000).toISOString(),
+        endTime: new Date(Date.now() - 172800000 + 3600000).toISOString(),
+        exercises: [
+          {
+            id: 'ex-2', name: 'Sentadilla Libre',
+            sets: [{ id: 'set-3', reps: 12, weight: 80, completed: true }, { id: 'set-4', reps: 10, weight: 85, completed: true }]
+          }
+        ]
+      }
+    ];
+
+    try {
+      await AsyncStorage.setItem('@workout_history', JSON.stringify(SAMPLE_DATA));
+      setHistory(SAMPLE_DATA);
+    } catch (error) {
+      console.error('Error saving sample data:', error);
+    }
+  };
 
   return (
     <ScreenContainer 
@@ -118,6 +74,14 @@ export default function HistoryScreen() {
         <Text variant="h1">Historial</Text>
       </View>
       
+      <Button 
+        variant="secondary" 
+        onPress={loadSampleData}
+        style={{ marginBottom: 24 }}
+      >
+        Cargar Datos de Prueba
+      </Button>
+
       {history.length === 0 ? (
         <View style={styles.emptyContainer}>
           <MaterialCommunityIcons name="clipboard-text-off-outline" size={64} color={theme.colors.textMuted} />
@@ -125,13 +89,35 @@ export default function HistoryScreen() {
             Aún no hay entrenamientos
           </Text>
           <Text variant="body" color={theme.colors.textSecondary} style={{ textAlign: 'center' }}>
-            Tu historial está vacío. ¡Ve a la pestaña de entrenar y registra tu primera sesión!
+            Aún no tienes entrenamientos registrados. Ve a la pestaña Entrenar para comenzar
           </Text>
         </View>
       ) : (
-        history.map((workout, index) => (
-          <HistoryCard key={workout.id || index} workout={workout} index={index} theme={theme} />
-        ))
+        history.map((workout) => {
+          const date = new Date(workout.startTime).toLocaleDateString();
+          return (
+            <Card key={workout.id} style={styles.card}>
+              <Text variant="h3" style={{ marginBottom: 8 }}>Fecha: {date}</Text>
+              {workout.endTime && (
+                <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: 12 }}>
+                  Finalizado: {new Date(workout.endTime).toLocaleTimeString()}
+                </Text>
+              )}
+              <Text variant="h3" style={{ marginBottom: 8 }}>Ejercicios realizados:</Text>
+              {workout.exercises.length === 0 ? (
+                <Text variant="body" color={theme.colors.textSecondary} style={{ marginLeft: 8 }}>
+                  Ninguno
+                </Text>
+              ) : (
+                workout.exercises.map((exercise) => (
+                  <Text key={exercise.id} variant="body" color={theme.colors.textSecondary} style={{ marginLeft: 8, marginBottom: 4 }}>
+                    • {exercise.name} ({exercise.sets.length} series)
+                  </Text>
+                ))
+              )}
+            </Card>
+          );
+        })
       )}
     </ScreenContainer>
   );
