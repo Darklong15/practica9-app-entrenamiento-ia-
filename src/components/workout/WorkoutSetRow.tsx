@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Input, Text } from '../ui';
+import { View, StyleSheet } from 'react-native';
+import { Input, Text, Button } from '../ui';
 import { useTheme } from '../../theme';
 import { WorkoutSet } from '../../types/workout';
 
@@ -35,15 +35,13 @@ export default function WorkoutSetRow({ set, index, onUpdate }: WorkoutSetRowPro
         containerStyle={styles.inputContainer}
       />
 
-      <TouchableOpacity
-        style={[
-          styles.checkButton,
-          { backgroundColor: set.completed ? theme.colors.primary : theme.colors.surface }
-        ]}
+      <Button
+        variant={set.completed ? "primary" : "secondary"}
         onPress={() => onUpdate(set.id, 'completed', !set.completed)}
+        style={styles.checkButton}
       >
-        <Text color={set.completed ? theme.colors.background : theme.colors.textMuted}>✓</Text>
-      </TouchableOpacity>
+        {set.completed ? "✓" : " "}
+      </Button>
     </View>
   );
 }
@@ -63,12 +61,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   checkButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#333', // fallback border
+    width: 48,
+    height: 48,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
   }
 });

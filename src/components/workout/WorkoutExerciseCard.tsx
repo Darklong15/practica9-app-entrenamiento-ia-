@@ -46,7 +46,8 @@ export default function WorkoutExerciseCard({
       ))}
 
       <Button
-        variant="secondary"
+        variant="ghost"
+        size="sm"
         style={styles.addButton}
         onPress={() => onAddSet(exercise.id)}
       >

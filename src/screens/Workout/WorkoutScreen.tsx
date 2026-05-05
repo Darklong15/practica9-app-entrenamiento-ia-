@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { ScreenContainer, Text, Button, Input } from '../../components/ui';
 import { useTheme } from '../../theme';
 import { ActiveWorkout, WorkoutExercise, WorkoutSet } from '../../types/workout';
 import { WorkoutService } from '../../services/WorkoutService';
-import { WorkoutExerciseCard } from '../../components/workout';
+import { WorkoutExerciseCard, RestTimer } from '../../components/workout';
 
 export default function WorkoutScreen() {
   const theme = useTheme();
@@ -144,13 +144,16 @@ export default function WorkoutScreen() {
   }
 
   return (
-    <ScreenContainer scrollable style={{ paddingBottom: 0 }}>
+    <ScreenContainer scrollable>
       <View style={styles.header}>
-        <Text variant="h2">Entrenamiento Activo</Text>
+        <Text variant="h1">Entrenamiento Activo</Text>
         <Button variant="danger" size="sm" onPress={finishWorkout}>
           Finalizar
         </Button>
       </View>
+
+      <RestTimer />
+
         {activeWorkout.exercises.map(exercise => (
           <WorkoutExerciseCard
             key={exercise.id}
@@ -166,17 +169,17 @@ export default function WorkoutScreen() {
             placeholder="Nombre del ejercicio (ej. Press de Banca)"
             value={newExerciseName}
             onChangeText={setNewExerciseName}
-            containerStyle={{ flex: 1, marginBottom: 0 }}
+            containerStyle={styles.exerciseInput}
           />
           <Button
             onPress={addExercise}
             disabled={!newExerciseName.trim()}
-            style={{ marginLeft: 8 }}
+            style={styles.exerciseAddButton}
           >
             Agregar
           </Button>
         </View>
-        <View style={{ height: 40 }} />
+        <View style={styles.spacer} />
     </ScreenContainer>
   );
 }
@@ -207,5 +210,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     marginBottom: 24,
+  },
+  exerciseInput: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  exerciseAddButton: {
+    marginLeft: 8,
+  },
+  spacer: {
+    height: 40,
   }
 });
