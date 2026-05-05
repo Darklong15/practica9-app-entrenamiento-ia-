@@ -64,7 +64,12 @@ export default function HistoryScreen() {
   };
 
   return (
-    <ScreenContainer scrollable={true}>
+    <ScreenContainer 
+      scrollable={true} 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
+      }
+    >
       <View style={styles.header}>
         <Text variant="h1">Historial</Text>
       </View>
@@ -79,6 +84,10 @@ export default function HistoryScreen() {
 
       {history.length === 0 ? (
         <View style={styles.emptyContainer}>
+          <MaterialCommunityIcons name="clipboard-text-off-outline" size={64} color={theme.colors.textMuted} />
+          <Text variant="h3" style={{ marginTop: 16, marginBottom: 8, textAlign: 'center' }}>
+            Aún no hay entrenamientos
+          </Text>
           <Text variant="body" color={theme.colors.textSecondary} style={{ textAlign: 'center' }}>
             Aún no tienes entrenamientos registrados. Ve a la pestaña Entrenar para comenzar
           </Text>
@@ -121,9 +130,35 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+  },
+  exercisesContainer: {
+    gap: 8,
+  },
+  exerciseRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   emptyContainer: {
     padding: 32,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 64,
   }
 });

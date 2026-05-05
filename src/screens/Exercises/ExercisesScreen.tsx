@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ScreenContainer, Text, Card } from '../../components/ui';
+import { ScreenContainer, Text, Card, Input } from '../../components/ui';
 import { useTheme } from '../../theme';
 
 interface Exercise {
@@ -119,29 +119,54 @@ const exercisesData: Category[] = [
 
 export default function ExercisesScreen() {
   const theme = useTheme();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredData = exercisesData.map(category => {
+    // Si la categoría coincide con la búsqueda, devolvemos todos los ejercicios
+    if (category.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return category;
+    }
+    // Si no, filtramos los ejercicios de esta categoría
+    const filteredExercises = category.exercises.filter(ex => 
+      ex.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    return { ...category, exercises: filteredExercises };
+  }).filter(category => category.exercises.length > 0);
 
   return (
-    <ScreenContainer scrollable={true}>
+    <ScreenContainer scrollable={true} padding="md">
       <View style={styles.header}>
-        <Text variant="h1">Biblioteca de Ejercicios</Text>
+        <Text variant="h1" style={{ marginBottom: 16 }}>Biblioteca</Text>
+        <Input 
+          placeholder="Buscar ejercicio o músculo..." 
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          containerStyle={{ width: '100%' }}
+        />
       </View>
       
-      {exercisesData.map((category, index) => (
-        <View key={index} style={styles.categoryContainer}>
-          <Text variant="h2" style={styles.categoryTitle}>{category.name}</Text>
-          {category.exercises.map((exercise, idx) => (
-            <Card key={idx} style={styles.card}>
-              <Text variant="h3" style={{ marginBottom: 8 }}>{exercise.name}</Text>
-              <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: 8 }}>
-                {exercise.description}
-              </Text>
-              <Text variant="body" color={theme.colors.primary} style={{ fontStyle: 'italic' }}>
-                Beneficios: {exercise.benefits}
-              </Text>
-            </Card>
-          ))}
+      {filteredData.length === 0 ? (
+        <View style={{ alignItems: 'center', padding: 32 }}>
+          <Text variant="body" color={theme.colors.textSecondary}>No se encontraron resultados.</Text>
         </View>
-      ))}
+      ) : (
+        filteredData.map((category, index) => (
+          <View key={index} style={styles.categoryContainer}>
+            <Text variant="h2" style={styles.categoryTitle}>{category.name}</Text>
+            {category.exercises.map((exercise, idx) => (
+              <Card key={idx} style={styles.card}>
+                <Text variant="h3" style={{ marginBottom: 8 }}>{exercise.name}</Text>
+                <Text variant="body" color={theme.colors.textSecondary} style={{ marginBottom: 8 }}>
+                  {exercise.description}
+                </Text>
+                <Text variant="body" color={theme.colors.primary} style={{ fontStyle: 'italic' }}>
+                  Beneficios: {exercise.benefits}
+                </Text>
+              </Card>
+            ))}
+          </View>
+        ))
+      )}
     </ScreenContainer>
   );
 }
